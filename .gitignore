@@ -16,3 +16,4 @@ export_credentials.cfg
 .vscode/
 .DS_Store
 __pycache__/
+/_site/

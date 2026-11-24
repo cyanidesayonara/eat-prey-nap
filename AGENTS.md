@@ -35,7 +35,7 @@ src/audio/sfx.gd        synthesized sounds (autoload Sfx)
 src/screen.gd           pixels <-> mm, safe area
 src/settings.gd         the human's choices, user://settings.cfg
 tests/                  test_*.gd, headless, all run by CI
-tools/                  run_tests.sh, android_export.sh, itch_export.sh, make_icon.gd, make_ico.py, shots.gd
+tools/                  run_tests.sh, android_export.sh, itch_export.sh, site_build.sh, site_media.gd, make_icon.gd, make_ico.py, shots.gd
 ```
 
 ## Things that are easy to break
@@ -62,6 +62,14 @@ tools/                  run_tests.sh, android_export.sh, itch_export.sh, make_ic
 on pull requests that touch exports and launches the Windows exe; it publishes
 on a `v*` tag only, and only once the owner has made a GitHub environment
 `itch` with `BUTLER_API_KEY` and `ITCH_PROJECT`. Never push a tag unasked.
+
+## Website
+
+`site/` is plain HTML and CSS: no framework, no external requests, relative
+links. `tools/site_build.sh` adds the web build at `/play` and checks the
+links; `tools/site_media.gd` makes the images. `pages.yml` deploys from
+`master`, only once the owner has set Pages to GitHub Actions and the
+repository variable `SITE_LIVE` to `true`.
 
 ## Android builds on Windows
 
