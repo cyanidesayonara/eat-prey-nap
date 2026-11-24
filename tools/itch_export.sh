@@ -17,6 +17,9 @@ for what in "$@"; do
   case "$what" in
     web)
       timeout 600 "$GODOT" --headless --path . --export-release "Web" build/web/index.html </dev/null
+      # the loading screen's animation, which the page asks for
+      cp site/logo.js build/web/logo.js
+      grep -q 'src="logo.js"' build/web/index.html
       test -s build/web/index.wasm
       test -s build/web/index.pck
       ;;

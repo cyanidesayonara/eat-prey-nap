@@ -6,10 +6,12 @@ extends Node2D
 
 const Palette := preload("res://src/view/palette.gd")
 const Settings := preload("res://src/settings.gd")
+const LogoView := preload("res://src/view/logo_view.gd")
 
 const ROW := 9.0             # mm, a button's height at most
 const GAP := 2.5
 const WIDTH := 150.0
+const LOGO := 30.0           # mm across, beside the title
 
 signal chosen(action: String)
 
@@ -19,12 +21,22 @@ var area := Rect2()          # usable pixels
 var report := ""
 var fps := 0.0
 var buttons: Array[Dictionary] = []   # {id, label, rect, on}
+var logo := LogoView.new()
+
+
+func _ready() -> void:
+	add_child(logo)
+
+
+func step(dt: float) -> void:
+	logo.step(dt)
+	queue_redraw()
 
 
 func layout() -> void:
 	buttons.clear()
 	# mm, shrunk on small screens
-	var m := minf(ppm, minf(area.size.y / 105.0, area.size.x / (WIDTH + 10.0)))
+	var m := minf(ppm, minf(area.size.y / 122.0, area.size.x / (WIDTH + 10.0)))
 	var rows := [[["play", "Play", false], ["watch", "Watch only", false]]]
 	for i in range(Palette.ALL.size()):
 		rows.append([["palette%d" % i, Palette.ALL[i]["name"], settings.palette == i]])
@@ -39,7 +51,14 @@ func layout() -> void:
 		last.append(["quit", "Quit", false])
 	rows.append(last)
 	var x := area.get_center().x - WIDTH * 0.5 * m
-	var y := area.position.y + 14.0 * m
+	var y := area.position.y + (LOGO + 3.0) * m
+	var pal: Dictionary = Palette.ALL[settings.palette]
+	logo.ink = pal["prey"]
+	logo.field = pal["field"]
+	logo.soft = pal["crumb"]
+	logo.width = LOGO * m
+	logo.position = Vector2(x + LOGO * 0.5 * m, area.position.y + (LOGO * 0.5 + 1.5) * m)
+	logo.queue_redraw()
 	for items: Array in rows:
 		var w := (WIDTH - GAP * (items.size() - 1)) / items.size()
 		for i in range(items.size()):
@@ -64,7 +83,7 @@ func _draw() -> void:
 	var h := first.size.y
 	var left := first.position.x
 	draw_rect(Rect2(Vector2.ZERO, get_viewport_rect().size), pal["field"])
-	_text(Vector2(left, first.position.y - h * 0.4), "Eat Prey Nap", int(h * 0.75), pal["prey"])
+	_text(logo.position + Vector2(logo.width * 0.62, h * 0.4), "Eat Prey Nap", int(h * 1.15), pal["prey"])
 	for b in buttons:
 		var r: Rect2 = b["rect"]
 		draw_rect(r, pal["prey"] if b["on"] else pal["mound"])

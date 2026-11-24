@@ -223,7 +223,7 @@ func paw_drag(index: int, px: Vector2, relative: Vector2, velocity: Vector2) -> 
 func _process(delta: float) -> void:
 	if not playing:
 		start.fps = Engine.get_frames_per_second()
-		start.queue_redraw()
+		start.step(delta)
 		return
 	if paused:
 		return

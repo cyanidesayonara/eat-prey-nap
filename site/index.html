@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Eat Prey Nap: a tablet game for cats</title>
   <meta name="description" content="A free tablet game for cats. A mouse hides, peeks and bolts; your cat stalks and pounces. No ads, no accounts, no internet.">
-  <link rel="icon" href="img/icon.png">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="icon" type="image/png" href="img/icon.png">
   <link rel="stylesheet" href="style.css">
+  <script src="logo.js" defer></script>
 </head>
 <body>
   <header class="wrap">
-    <h1>Eat Prey Nap</h1>
+    <div class="hero">
+      <svg data-logo="solid" class="logo"></svg>
+      <h1>Eat Prey Nap</h1>
+    </div>
     <p class="lead">A free tablet game for cats. The player is the cat.</p>
     <p><a class="button" href="play/">Try it in the browser</a></p>
     <p class="note">An early prototype: one mouse, about 40 MB to load. Your cat may have notes.</p>
@@ -62,6 +67,7 @@
   </main>
 
   <footer class="wrap">
+    <svg data-logo="outline" class="mark"></svg>
     <p><a href="https://github.com/cyanidesayonara/eat-prey-nap">Source code</a> (MIT licence) · <a href="privacy/">Privacy</a></p>
     <p>Formerly Trivial Purrsuit. By Santtu Nykänen.</p>
   </footer>

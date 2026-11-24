@@ -50,6 +50,7 @@ func _run() -> void:
 	var screen := Rect2(Vector2.ZERO, m.get_viewport_rect().size)
 	for b: Dictionary in m.start.buttons:
 		check(screen.encloses(b["rect"]), "button %s is on screen" % b["id"])
+		check(not (b["rect"] as Rect2).intersects(Rect2(m.start.logo.position - Vector2.ONE * m.start.logo.width * 0.5, Vector2.ONE * m.start.logo.width)), "the logo is clear of button %s" % b["id"])
 
 	_tap_button("palette1")
 	_tap_button("size2")
