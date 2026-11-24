@@ -8,10 +8,12 @@
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="icon" type="image/png" href="img/icon.png">
   <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
   <script src="logo.js" defer></script>
 </head>
 <body>
   <header class="wrap">
+    <fieldset class="themes" data-themes hidden></fieldset>
     <div class="hero">
       <svg data-logo="solid" class="logo"></svg>
       <h1>Eat Prey Nap</h1>
@@ -23,7 +25,9 @@
 
   <main>
     <div class="wrap">
-      <img class="frame" src="img/sniff.png" width="1280" height="800" alt="A large ink-blue mouse with big round ears on a plain straw-coloured field with a few crumbs">
+      <img class="frame only-straw" src="img/sniff.png" width="1280" height="800" alt="A large ink-blue mouse with big round ears on a plain straw-coloured field with a few crumbs">
+      <img class="frame only-night" src="img/ink.png" width="1280" height="800" loading="lazy" alt="A large pale-yellow mouse with big round ears on a plain ink-blue field">
+      <img class="frame only-grey" src="img/grey.png" width="1280" height="800" loading="lazy" alt="A large near-black mouse with big round ears on a plain grey field">
     </div>
 
     <section class="wrap">
@@ -36,7 +40,7 @@
       </ul>
     </section>
 
-    <section class="night">
+    <section class="band">
       <div class="wrap">
         <h2>Drawn for a cat's eyes</h2>
         <p>Cats see brightness contrast best, then blue against yellow. So there is no red against green, no flashing and no fine texture, just bold shapes on a plain field. There are three palettes and three mouse sizes to compare, measured in millimetres.</p>

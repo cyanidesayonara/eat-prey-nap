@@ -1,18 +1,35 @@
-/* The game's own palette (src/view/palette.gd): straw and ink blue. */
+/* The game's own three palettes (src/view/palette.gd); theme.js picks one. */
 :root {
-  --straw: #e9d9a0;
-  --straw-deep: #d9c789;
-  --mound: #c8b06c;
-  --ink: #121b48;
-  --night: #152150;
-  --pale: #f6ebb4;
+  --field: #e9d9a0;      /* the page */
+  --line: #d9c789;
+  --ink: #121b48;        /* text, buttons, the logo's badge */
+  --soft: #b9a05a;
+  --band: #152150;       /* the contrasting section */
+  --band-ink: #f6ebb4;
 }
+:root[data-theme="night"] {
+  --field: #152150;
+  --line: #3b4a8a;
+  --ink: #f6ebb4;
+  --soft: #5a6ab0;
+  --band: #e9d9a0;
+  --band-ink: #121b48;
+}
+:root[data-theme="grey"] {
+  --field: #979797;
+  --line: #767676;
+  --ink: #0b0b0e;
+  --soft: #646464;
+  --band: #0b0b0e;
+  --band-ink: #d6d6d6;
+}
+:root { --logo-ink: var(--ink); --logo-field: var(--field); --logo-soft: var(--soft); }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--straw);
+  background: var(--field);
   color: var(--ink);
   font: 1.125rem/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -35,7 +52,7 @@ header { padding-block: 3rem 2rem; }
 .button {
   display: inline-block;
   background: var(--ink);
-  color: var(--pale);
+  color: var(--field);
   padding: 0.8rem 1.6rem;
   border-radius: 999px;
   font-weight: 700;
@@ -43,15 +60,31 @@ header { padding-block: 3rem 2rem; }
 }
 .note { font-size: 1rem; }
 section { padding-block: 2.5rem; }
-.night { background: var(--night); color: var(--pale); }
-.night a:focus-visible { outline-color: var(--pale); }
-.frame { border: 2px solid var(--straw-deep); border-radius: 14px; }
+.band { background: var(--band); color: var(--band-ink); }
+.band a:focus-visible { outline-color: var(--band-ink); }
+.frame { border: 2px solid var(--line); border-radius: 14px; }
 
 .steps, .grid { display: grid; gap: 1.5rem; padding: 0; margin: 0; list-style: none; }
-.steps { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
-.grid { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.steps { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .grid figure { margin: 0; }
 figcaption { margin-top: 0.5rem; font-size: 1rem; }
 .steps p, .grid p { margin: 0; }
 
-footer { padding-block: 2rem 3rem; border-top: 2px solid var(--straw-deep); font-size: 1rem; }
+footer { padding-block: 2rem 3rem; border-top: 2px solid var(--line); font-size: 1rem; }
+
+.themes { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; border: 0; margin: 0 0 1.5rem; padding: 0; font-size: 1rem; }
+.themes[hidden] { display: none; }
+.themes legend { float: left; padding: 0; margin-right: 0.25rem; }
+.swatch { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 2px solid var(--line); font-weight: 600; cursor: pointer; }
+.swatch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.swatch.straw { background: #e9d9a0; color: #121b48; }
+.swatch.night { background: #152150; color: #f6ebb4; }
+.swatch.grey { background: #979797; color: #0b0b0e; }
+.swatch:has(:checked) { border-color: currentColor; box-shadow: 0 0 0 2px var(--ink); }
+.swatch:has(:focus-visible) { outline: 3px solid var(--ink); outline-offset: 4px; }
+
+/* the big picture wears the theme too; without scripts it is the straw one */
+.only-night, .only-grey { display: none; }
+:root[data-theme="night"] .only-night, :root[data-theme="grey"] .only-grey { display: block; }
+:root[data-theme="night"] .only-straw, :root[data-theme="grey"] .only-straw { display: none; }

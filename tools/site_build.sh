@@ -15,7 +15,7 @@ touch _site/.gdignore
 cp -r site/. _site/
 cp build/web/* _site/play/
 rm -f _site/play/*.import
-for f in index.html privacy/index.html style.css logo.js play/logo.js play/guard.js play/index.html play/index.wasm play/index.pck; do
+for f in index.html privacy/index.html style.css logo.js theme.js play/logo.js play/guard.js play/index.html play/index.wasm play/index.pck; do
   test -s "_site/$f"
 done
 
