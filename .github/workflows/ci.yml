@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  attribution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: No co-author or tool attribution in any commit
+        run: |
+          if git log --format='%H%n%B' HEAD | grep -niE '^(co-authored-by|generated-by|assisted-by|made-with):|cursoragent@|noreply@anthropic'; then
+            echo "Attribution trailers are not allowed in this repo"
+            exit 1
+          fi
+
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - name: Cache Godot
+        uses: actions/cache@v4
+        with:
+          path: godot.zip
+          key: godot-4.7-stable-linux-x86_64
+      - name: Download Godot
+        run: |
+          if [ ! -s godot.zip ]; then
+            curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          fi
+          unzip -q godot.zip
+          chmod +x Godot_v4.7-stable_linux.x86_64
+      - name: Import leaves the checkout clean
+        run: |
+          ./Godot_v4.7-stable_linux.x86_64 --headless --path . --import
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --porcelain
+            exit 1
+          fi
+      - name: Headless tests
+        env:
+          GODOT: ./Godot_v4.7-stable_linux.x86_64
+        run: bash tools/run_tests.sh
