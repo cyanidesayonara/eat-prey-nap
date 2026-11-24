@@ -1,29 +1,54 @@
-# trivial-purrsuit
+# Eat Prey Nap
 
-A Flutter-based mobile game designed specifically for cats! The game features interactive moving objects like mice, bugs, laser dots, feathers, and yarn balls that respond to your cat's touch. Each object has unique behaviors and reactions when touched.
+A free tablet game for cats, formerly Trivial Purrsuit. The player is the cat.
 
-## Features
+A mouse hides, shows its ears, peeks, sniffs about, freezes and bolts. The cat
+stalks and pounces. No ads, no accounts, no purchases, no internet.
 
-- Multiple interactive objects with unique behaviors
-- Smooth animations and movement
-- Black background for better visibility
-- Maximum of 2 objects on screen to avoid overwhelming cats
-- 3-second delay between spawning new objects
-- Full-screen immersive mode
-- Landscape orientation for wider play area
+This is a new game made with Godot. The Flutter prototype is kept at the tag
+[`flutter-legacy`](https://github.com/cyanidesayonara/eat-prey-nap/tree/flutter-legacy).
 
-## Getting Started
+**State:** M0, a one-mouse prototype to try with cats. Not on any store yet.
+The plan is in [PROJECT.md](PROJECT.md).
 
-1. Make sure you have Flutter installed
-2. Clone this repository
-3. Run `flutter pub get` to install dependencies
-4. Connect your device and run `flutter run`
+## Run it
 
-## Requirements
+A portable [Godot 4.7](https://godotengine.org/download) (the standard build)
+lives in `godot/` locally (gitignored).
 
-- Android 6.0 (API level 21) or higher
-- Flutter 3.0 or higher
+```bash
+godot/Godot_v4.7-stable_win64.exe --path .
+```
+
+On a PC:
+
+| Do | What it is |
+|---|---|
+| Left click, or drag fast | A paw |
+| Right click | A second paw that stays there; right click again lifts it |
+| Esc | Back to the start screen |
+
+On a touch screen every finger is a paw. **To leave the game, hold two opposite
+corners for 2 seconds.** Back does nothing while a cat is playing.
+
+The start screen has the three palettes, the three mouse sizes and a 50 mm
+ruler. Hold a real ruler against it and correct it, or the sizes are off.
+
+Options go after a `--`: `--play`, `--watch`, `--palette=0..2`, `--size=0..2`,
+`--dpi=N`, `--seed=N`.
+
+## Test it
+
+```bash
+GODOT=godot/Godot_v4.7-stable_win64_console.exe bash tools/run_tests.sh
+```
+
+## With a cat
+
+Put the tablet flat on the floor, on something that does not slide. Clean the
+screen. Stay in the room, keep sessions short, and end on a catch with a real
+treat: a cat that can never catch anything gets frustrated.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT, see [LICENSE](LICENSE).
