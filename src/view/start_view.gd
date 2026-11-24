@@ -21,6 +21,7 @@ var area := Rect2()          # usable pixels
 var report := ""
 var fps := 0.0
 var buttons: Array[Dictionary] = []   # {id, label, rect, on}
+var can_pin := false         # Android only
 var logo := LogoView.new()
 
 
@@ -46,6 +47,8 @@ func layout() -> void:
 	rows.append(sizes)
 	var last := [["dpi-", "Ruler shorter", false], ["dpi+", "Ruler longer", false],
 		["sound", "Sound on" if settings.sound else "Sound off", settings.sound]]
+	if can_pin:
+		last.append(["pin", "Pinning on" if settings.pin else "Pinning off", settings.pin])
 	# a web page cannot close itself
 	if not OS.has_feature("web"):
 		last.append(["quit", "Quit", false])
@@ -94,7 +97,7 @@ func _draw() -> void:
 	draw_rect(Rect2(left, y, 50.0 * ppm, h * 0.15), pal["prey"])
 	var small := int(h * 0.36)
 	_text(Vector2(left, y + h * 0.65), "The bar above should measure 50 mm. Drawing %d frames a second." % roundi(fps), small, pal["prey"])
-	_text(Vector2(left, y + h * 1.2), "To leave the game, hold two opposite corners for 2 seconds.", small, pal["prey"])
+	_text(Vector2(left, y + h * 1.2), "To leave the game, hold two opposite corners for 2 seconds%s." % ("" if OS.has_feature("mobile") else ", or hold Esc"), small, pal["prey"])
 	_text(Vector2(left, y + h * 1.75), report, small, pal["prey"])
 
 

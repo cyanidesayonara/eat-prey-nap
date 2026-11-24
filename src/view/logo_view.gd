@@ -19,6 +19,7 @@ var ink := Color.BLACK
 var field := Color.WHITE
 var soft := Color.GRAY
 var width := 100.0                 # pixels across
+var curled := false                # only the curled-up cat, for the icon
 var still := false                 # reduced motion: the nap, not moving
 
 var sec := 0.0
@@ -155,8 +156,17 @@ static func camera(p: Dictionary) -> float:
 # --- drawing ----------------------------------------------------------------
 
 func _draw() -> void:
-	var p := curl(pose(sec), sec)
 	_k = width / 324.0
+	if curled:
+		var c := pose(nap_time())
+		c["blob"] = 1.0
+		_k *= 2.0
+		_xf = Transform2D(0.0, Vector2.ONE * _k, 0.0, (Vector2(-3, 1) - MID) * _k)
+		c = curl(c, 0.0)
+		c["head"][1] -= 5.0          # clear of the back, so no sliver between the ears
+		_cat(c)
+		return
+	var p := curl(pose(sec), sec)
 	var disc := PackedVector2Array()
 	for q in shape(p):
 		disc.append(q * _k)

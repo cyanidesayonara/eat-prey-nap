@@ -29,6 +29,13 @@ func _click(button: int, px: Vector2, down: bool) -> void:
 	m._input(e)
 
 
+func _key(code: Key, down: bool) -> void:
+	var e := InputEventKey.new()
+	e.keycode = code
+	e.pressed = down
+	m._input(e)
+
+
 func _tap_button(id: String) -> void:
 	for b: Dictionary in m.start.buttons:
 		if b["id"] == id:
@@ -68,6 +75,34 @@ func _run() -> void:
 
 	m.on_back()
 	check(m.playing, "Back does nothing during play")
+
+	# a tap on Esc is a cat on the keyboard; holding it is a human
+	_key(KEY_ESCAPE, true)
+	_key(KEY_ESCAPE, false)
+	for i in range(150):
+		m._process(1.0 / 60.0)
+	check(m.playing, "a tap on Esc does nothing")
+	_key(KEY_ESCAPE, true)
+	for i in range(100):
+		m._process(1.0 / 60.0)
+	check(m.playing, "nor does holding it for less than 2 seconds")
+	for i in range(30):
+		m._process(1.0 / 60.0)
+	check(not m.playing, "holding Esc for 2 seconds leaves")
+	_key(KEY_ESCAPE, false)
+	_tap_button("play")
+	m.notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)
+	check(not m.playing and not auto_accept_quit, "closing the window in play only leaves play")
+	_tap_button("play")
+
+	# the pinning switch, where there is pinning
+	m.start.can_pin = true
+	m.to_start()
+	_tap_button("pin")
+	check(not m.settings.pin, "pinning can be turned off")
+	_tap_button("pin")
+	m.start.can_pin = false
+	_tap_button("play")
 
 	# pausing drops paws and stops time
 	_touch(3, Vector2(300, 300), true)

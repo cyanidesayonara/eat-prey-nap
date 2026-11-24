@@ -4,12 +4,14 @@ extends Node2D
 # millimetres; input divides by ppm (pixels per mm) and the views multiply.
 #
 # On a PC: left button is a paw. Right click leaves a second paw resting
-# where it is (right click again lifts it). Esc goes back to the start screen.
+# where it is (right click again lifts it). Holding Esc for 2 seconds goes back to the
+# start screen, as two held corners do.
 #
 # Options after a "--": --play --watch --palette=N --size=N --dpi=N --seed=N
 
 const Brain := preload("res://src/sim/mouse_brain.gd")
 const Paws := preload("res://src/input/paws.gd")
+const Guard := preload("res://src/guard.gd")
 const Screen := preload("res://src/screen.gd")
 const Settings := preload("res://src/settings.gd")
 const Palette := preload("res://src/view/palette.gd")
@@ -36,11 +38,15 @@ var paused := false
 var ppm := 4.0
 var play_t := 0.0
 var seed_value := -1
+var windowed := false          # --windowed: no fullscreen while developing
+var _esc := false
+var _esc_t := 0.0
 var _crumb_count := -1
 
 
 func _ready() -> void:
 	get_tree().quit_on_go_back = false
+	get_tree().auto_accept_quit = false
 	# a press acts on its own event, not bundled with the frame's others
 	Input.use_accumulated_input = false
 	add_child(world)
@@ -48,6 +54,7 @@ func _ready() -> void:
 		world.add_child(n)
 	add_child(start)
 	start.settings = settings
+	start.can_pin = Guard.can_pin()
 	start.chosen.connect(choose)
 	if DisplayServer.get_name() == "headless":
 		settings.path = ""
@@ -63,6 +70,8 @@ func _ready() -> void:
 			settings.size = clampi(int(a.get_slice("=", 1)), 0, Settings.SIZES_MM.size() - 1)
 		elif a.begins_with("--dpi="):
 			settings.dpi = float(a.get_slice("=", 1))
+		elif a == "--windowed":
+			windowed = true
 		elif a.begins_with("--seed="):
 			seed_value = int(a.get_slice("=", 1))
 	_use(brain)
@@ -120,7 +129,10 @@ func to_start() -> void:
 		start.report = "Last time: %d:%02d, %d paws, %d good tries, %d catches, paws busy %d s." % [
 			int(play_t / 60.0), int(play_t) % 60, paws.swats,
 			brain.difficulty.good_tries, brain.difficulty.catches, int(paws.active_t)]
+	if playing and not windowed:
+		Guard.leave()
 	playing = false
+	_esc = false
 	paws.clear()
 	start.visible = true
 	world.visible = false
@@ -134,6 +146,9 @@ func to_play(watch: bool) -> void:
 	paws = Paws.new()
 	play_t = 0.0
 	playing = true
+	_esc = false
+	if not windowed:
+		Guard.enter(settings.pin)
 	relayout()
 	start.visible = false
 	world.visible = true
@@ -152,6 +167,8 @@ func choose(id: String) -> void:
 			return
 		"sound":
 			settings.sound = not settings.sound
+		"pin":
+			settings.pin = not settings.pin
 		"dpi-", "dpi+":
 			var now := ppm * Screen.MM_PER_INCH
 			settings.dpi = clampf(now + (DPI_STEP if id == "dpi+" else -DPI_STEP), 60.0, 900.0)
@@ -187,10 +204,10 @@ func _input(event: InputEvent) -> void:
 				paw_down(MOUSE_RIGHT, event.position)
 	elif event is InputEventMouseMotion:
 		paw_drag(MOUSE_LEFT, event.position, event.relative, event.velocity)
-	elif event is InputEventKey and event.pressed and not event.echo:
-		# a cat can walk over a tablet's keyboard, so keys work on a PC only
-		if event.keycode == KEY_ESCAPE and playing and not OS.has_feature("mobile"):
-			to_start()
+	elif event is InputEventKey and event.keycode == KEY_ESCAPE and not event.echo:
+		# held, not tapped: cats walk over keyboards
+		_esc = event.pressed and playing
+		_esc_t = 0.0
 
 
 func paw_down(index: int, px: Vector2) -> void:
@@ -229,7 +246,9 @@ func _process(delta: float) -> void:
 		return
 	play_t += delta
 	paws.step(delta)
-	if paws.exit_wanted():
+	if _esc:
+		_esc_t += delta
+	if paws.exit_wanted() or (_esc and _esc_t >= Paws.EXIT_HOLD):
 		to_start()
 		return
 	brain.step(delta)
@@ -252,6 +271,8 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_WM_GO_BACK_REQUEST:
 			on_back()
+		NOTIFICATION_WM_CLOSE_REQUEST:
+			on_close()
 		NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 			on_pause()
 		NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_WM_WINDOW_FOCUS_IN:
@@ -264,6 +285,15 @@ func on_back() -> void:
 		choose("quit")
 
 
+# Alt+F4 or the window's cross: out of play first, and only then out
+func on_close() -> void:
+	if playing:
+		to_start()
+	else:
+		choose("quit")
+
+
 func on_pause() -> void:
 	paused = true
+	_esc = false
 	paws.clear()         # their releases may never arrive

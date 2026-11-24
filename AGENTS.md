@@ -50,7 +50,9 @@ tools/                  run_tests.sh, android_export.sh, itch_export.sh, site_bu
   tests its own rectangles.
 - **Mounds are drawn over the mouse.** The tail is reeled out only as far as
   the mound covers it, and kept straight under there (`tail_out`, `_step_tail`).
-- **Back does nothing during play**: cats swipe from the edges.
+- **Back does nothing during play**: cats swipe from the edges. `src/guard.gd`
+  (Android pinning, PC fullscreen) and `site/guard.js` (web) keep the cat in;
+  Esc has to be held, and closing the window in play only leaves play.
 - **A good try is a hit.** Near misses do not count towards difficulty.
 - **Pausing drops every touch**, because their releases may never arrive.
 - `_set`, `_get` and `_notification` are engine virtuals; do not name your own
