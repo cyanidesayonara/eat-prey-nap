@@ -65,7 +65,7 @@ Highest refresh rate available (90/120/144 Hz), and good at 60.
 
 - Multi-touch, acts on press, generous hit area, ignores resting pads.
 - The human leaves by holding two opposite corners for 2 s.
-- Later: optional Android screen pinning.
+- Android pins the screen during play (can be turned off). `src/guard.gd`.
 
 ## Scope of v1
 

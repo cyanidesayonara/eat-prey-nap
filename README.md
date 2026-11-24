@@ -26,16 +26,23 @@ On a PC:
 |---|---|
 | Left click, or drag fast | A paw |
 | Right click | A second paw that stays there; right click again lifts it |
-| Esc | Back to the start screen |
+| Hold Esc for 2 seconds | Back to the start screen |
 
 On a touch screen every finger is a paw. **To leave the game, hold two opposite
-corners for 2 seconds.** Back does nothing while a cat is playing.
+corners for 2 seconds.** Back does nothing
+while a cat is playing.
+
+**Keeping the cat in.** On Android the game pins the screen (Android asks you
+first; it can be turned off on the start screen). On a PC and in a browser it
+goes fullscreen. In a browser it also swallows Back, asks before the tab
+closes and returns to fullscreen at the next paw, but no web page can block the
+system's own gestures: use the Android app, or Guided Access on an iPad.
 
 The start screen has the three palettes, the three mouse sizes and a 50 mm
 ruler. Hold a real ruler against it and correct it, or the sizes are off.
 
 Options go after a `--`: `--play`, `--watch`, `--palette=0..2`, `--size=0..2`,
-`--dpi=N`, `--seed=N`.
+`--dpi=N`, `--seed=N`, `--windowed`.
 
 ## Test it
 

@@ -162,6 +162,7 @@
     const p = pose(NAP);
     p.blob = 1;
     const c = colors, at = curl(p, 0);
+    at.head[1] -= 5;                         // clear of the back, so no sliver between the ears
     return `<path d="${shape(pose(NAP))}" fill="${c.ink}"/><g transform="translate(150 152) scale(1.85) translate(${-BX} ${-BY})">${cat(at, 0, c.field, c.ink, c.soft)}</g>`;
   }
   root.EatPreyNap = {LOGO, badge, curled, pose, TOTAL, NAP, VIEW};

@@ -9,6 +9,7 @@ var palette := 0
 var size := 1
 var dpi := 0.0               # 0: what the device says
 var sound := true
+var pin := true              # Android: pin the screen while the cat plays
 
 
 func load_file() -> void:
@@ -18,6 +19,7 @@ func load_file() -> void:
 	palette = clampi(int(c.get_value("play", "palette", 0)), 0, 2)
 	size = clampi(int(c.get_value("play", "size", 1)), 0, SIZES_MM.size() - 1)
 	sound = bool(c.get_value("play", "sound", true))
+	pin = bool(c.get_value("play", "pin", true))
 	dpi = clampf(float(c.get_value("screen", "dpi", 0.0)), 0.0, 900.0)
 
 
@@ -28,5 +30,6 @@ func save_file() -> void:
 	c.set_value("play", "palette", palette)
 	c.set_value("play", "size", size)
 	c.set_value("play", "sound", sound)
+	c.set_value("play", "pin", pin)
 	c.set_value("screen", "dpi", dpi)
 	c.save(path)
