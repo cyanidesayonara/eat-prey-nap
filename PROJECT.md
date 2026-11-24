@@ -84,8 +84,7 @@ Not in v1: laser dot, camera, ads, accounts, purchases, iOS.
 - **M4 Hardening.**
 - **M5 itch.** First public release, the way Leash Resistance does it: CI
   pushes a channel per build on a version tag. See below.
-- **M6 Play release.** New account, so probably 12 testers for 14 days. A
-  trademark check on the title is still to do.
+- **M6 Play release.** New account, so probably 12 testers for 14 days.
 
 ## Where it ships
 
@@ -101,7 +100,21 @@ itch first, then Google Play; the Microsoft Store only if it makes sense.
 - **Microsoft Store:** doubtful. It wants its own packaging and listing, for
   few touch screens a cat may stand on. Decide on how the itch Windows
   download does.
-- **Before any public page:** the trademark check on the title. M1 and M2 can use a password-protected itch page.
+- **Before M5:** M1 and M2 can use a password-protected itch page.
+
+## The title
+
+Kept, after a first search on 24 November 2026 (TMview, Google Play, itch, the
+web; not legal clearance). No trademark or app of that exact name was found.
+The risk is ZeniMax's PREY for games, which it used in 2017 to oppose the
+trademark filing for Prey for the Gods. So:
+
+- do not file a trademark for the title
+- never shorten it to "Prey"; the three words are the same size in any logo
+- the package ID stays neutral, so the title can change
+- ask a trademark lawyer before spending money on the name
+
+Also seen: EAT. SLEEP. PREY. (US, pet food) and the app Eat Prey Live.
 
 ## Open
 
