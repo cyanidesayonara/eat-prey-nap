@@ -1,5 +1,5 @@
 # The website: site/ at the root and this commit's web build at /play.
-# Pull requests build it and check its links. It is deployed from master only,
+# Pull requests build it and check its links. It is deployed from main only,
 # and only once the owner has gone live:
 #   1. Settings > Pages > Source: GitHub Actions
 #   2. the repository variable SITE_LIVE set to true
@@ -8,7 +8,7 @@ name: Website
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
     paths:
       - "site/**"
@@ -62,7 +62,7 @@ jobs:
 
   deploy:
     needs: build
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.SITE_LIVE == 'true' }}
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.SITE_LIVE == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # one deploy at a time, and never cancel one halfway
