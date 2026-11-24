@@ -32,8 +32,12 @@ func layout() -> void:
 	for i in range(Settings.SIZES_MM.size()):
 		sizes.append(["size%d" % i, "%d mm" % int(Settings.SIZES_MM[i]), settings.size == i])
 	rows.append(sizes)
-	rows.append([["dpi-", "Ruler shorter", false], ["dpi+", "Ruler longer", false],
-		["sound", "Sound on" if settings.sound else "Sound off", settings.sound], ["quit", "Quit", false]])
+	var last := [["dpi-", "Ruler shorter", false], ["dpi+", "Ruler longer", false],
+		["sound", "Sound on" if settings.sound else "Sound off", settings.sound]]
+	# a web page cannot close itself
+	if not OS.has_feature("web"):
+		last.append(["quit", "Quit", false])
+	rows.append(last)
 	var x := area.get_center().x - WIDTH * 0.5 * m
 	var y := area.position.y + 14.0 * m
 	for items: Array in rows:

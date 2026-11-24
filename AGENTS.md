@@ -35,7 +35,7 @@ src/audio/sfx.gd        synthesized sounds (autoload Sfx)
 src/screen.gd           pixels <-> mm, safe area
 src/settings.gd         the human's choices, user://settings.cfg
 tests/                  test_*.gd, headless, all run by CI
-tools/                  run_tests.sh, android_export.sh, make_icon.gd, shots.gd
+tools/                  run_tests.sh, android_export.sh, itch_export.sh, make_icon.gd, make_ico.py, shots.gd
 ```
 
 ## Things that are easy to break
@@ -55,6 +55,13 @@ tools/                  run_tests.sh, android_export.sh, make_icon.gd, shots.gd
 - **Pausing drops every touch**, because their releases may never arrive.
 - `_set`, `_get` and `_notification` are engine virtuals; do not name your own
   functions that.
+
+## itch
+
+`tools/itch_export.sh` builds the web and Windows versions. `itch.yml` runs it
+on pull requests that touch exports and launches the Windows exe; it publishes
+on a `v*` tag only, and only once the owner has made a GitHub environment
+`itch` with `BUTLER_API_KEY` and `ITCH_PROJECT`. Never push a tag unasked.
 
 ## Android builds on Windows
 

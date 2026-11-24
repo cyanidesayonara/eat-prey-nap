@@ -128,6 +128,8 @@ func _export_promises() -> void:
 	check("permissions/internet=false" in cfg, "no internet permission")
 	var granted := RegEx.create_from_string("permissions/\\w+=true")
 	check(granted.search(cfg) == null, "no permissions at all")
+	check('platform="Web"' in cfg and 'platform="Windows Desktop"' in cfg, "itch's web and Windows presets")
+	check("variant/thread_support=false" in cfg, "the web build needs no special headers")
 	check('min_sdk="24"' in cfg and 'target_sdk="36"' in cfg, "minSdk 24, targetSdk 36")
 	check(int(ProjectSettings.get_setting("display/window/handheld/orientation")) == 4, "landscape, either way up")
 	check(int(ProjectSettings.get_setting("application/run/max_fps")) == 0, "no frame cap")

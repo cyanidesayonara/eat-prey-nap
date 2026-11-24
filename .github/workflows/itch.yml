@@ -1,0 +1,149 @@
+# The web and Windows builds for itch. Every run builds them and launches the
+# Windows one; only a version tag (v*) also publishes, after CI is green.
+#
+# Publishing needs, in a GitHub environment named `itch` that deploys from v*
+# tags only: the secret BUTLER_API_KEY and the variable ITCH_PROJECT
+# (user/project). Without both, a tag fails here and publishes nothing.
+
+name: itch
+
+on:
+  push:
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - export_presets.cfg
+      - project.godot
+      - tools/itch_export.sh
+      - .github/workflows/itch.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: itch-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cache Godot and its export templates
+        uses: actions/cache@v4
+        with:
+          path: |
+            godot.zip
+            templates.tpz
+          key: godot-4.7-stable-linux-templates
+
+      - name: Download Godot + export templates
+        run: |
+          set -euo pipefail
+          if [ ! -s godot.zip ]; then
+            curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          fi
+          if [ ! -s templates.tpz ]; then
+            curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o templates.tpz https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz
+          fi
+          unzip -q -o godot.zip
+          chmod +x Godot_v4.7-stable_linux.x86_64
+          mkdir -p "$RUNNER_TEMP/tpl" ~/.local/share/godot/export_templates/4.7.stable
+          unzip -q -o templates.tpz -d "$RUNNER_TEMP/tpl"
+          mv "$RUNNER_TEMP"/tpl/templates/* ~/.local/share/godot/export_templates/4.7.stable/
+
+      - name: Export
+        run: GODOT="$PWD/Godot_v4.7-stable_linux.x86_64" bash tools/itch_export.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: itch-web
+          path: build/web
+          retention-days: 7
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: itch-windows
+          path: build/win
+          retention-days: 7
+
+  windows:
+    needs: build
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: itch-windows
+          path: win
+
+      # the runner has no GPU, so headless: it proves the exe starts, finds
+      # its packed game and plays ten seconds without a script error
+      - name: The exe runs
+        shell: bash
+        run: |
+          set -uo pipefail
+          timeout 90 ./win/EatPreyNap.exe --headless --quit-after 600 --log-file "$PWD/game.log" -- --play
+          rc=$?
+          cat game.log
+          [ "$rc" -eq 0 ] && grep -q "Godot Engine" game.log && ! grep -qE "SCRIPT ERROR|Parse Error|Failed to load" game.log
+
+  publish:
+    needs: [build, windows]
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
+    environment: itch
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Require green CI for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 1200))
+          while (( SECONDS < deadline )); do
+            json="$(gh run list --repo "$GITHUB_REPOSITORY" --commit "$GITHUB_SHA" --workflow ci.yml --limit 30 --json conclusion,status)"
+            if [ "$(jq '[.[] | select(.conclusion == "success")] | length' <<<"$json")" -gt 0 ]; then
+              exit 0
+            fi
+            if [ "$(jq '[.[] | select(.status != "completed")] | length' <<<"$json")" -eq 0 ] &&
+               [ "$(jq 'length' <<<"$json")" -gt 0 ]; then
+              echo "CI did not succeed for $GITHUB_SHA"
+              exit 1
+            fi
+            sleep 20
+          done
+          echo "Timed out waiting for CI on $GITHUB_SHA"
+          exit 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: itch-web
+          path: build/web
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: itch-windows
+          path: build/win
+
+      - name: Push to itch with butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+          ITCH_PROJECT: ${{ vars.ITCH_PROJECT }}
+        run: |
+          set -euo pipefail
+          if [ -z "$BUTLER_API_KEY" ] || [ -z "$ITCH_PROJECT" ]; then
+            echo "BUTLER_API_KEY and ITCH_PROJECT (itch environment) are not both set; nothing published."
+            exit 1
+          fi
+          curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip
+          chmod +x butler
+          ./butler push build/web "$ITCH_PROJECT:html5" --userversion "$GITHUB_REF_NAME"
+          ./butler push build/win "$ITCH_PROJECT:windows" --userversion "$GITHUB_REF_NAME"
