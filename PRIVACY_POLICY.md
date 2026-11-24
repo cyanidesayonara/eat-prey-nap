@@ -23,7 +23,8 @@ children.
 
 ## The website
 
-The website sets no cookies and loads nothing from other sites. It is hosted on
+The website sets no cookies. The colours you pick are remembered in your own
+browser. It loads nothing from other sites. It is hosted on
 GitHub Pages, and GitHub may log visitors' IP addresses for security, as
 [its privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
 explains. If you download or play the game from a store, that store's own
