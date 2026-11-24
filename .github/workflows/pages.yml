@@ -1,0 +1,90 @@
+# The website: site/ at the root and this commit's web build at /play.
+# Pull requests build it and check its links. It is deployed from master only,
+# and only once the owner has gone live:
+#   1. Settings > Pages > Source: GitHub Actions
+#   2. the repository variable SITE_LIVE set to true
+
+name: Website
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    paths:
+      - "site/**"
+      - tools/site_build.sh
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cache Godot and its export templates
+        uses: actions/cache@v4
+        with:
+          path: |
+            godot.zip
+            templates.tpz
+          key: godot-4.7-stable-linux-templates
+
+      - name: Download Godot + export templates
+        run: |
+          set -euo pipefail
+          if [ ! -s godot.zip ]; then
+            curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          fi
+          if [ ! -s templates.tpz ]; then
+            curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o templates.tpz https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz
+          fi
+          unzip -q -o godot.zip
+          chmod +x Godot_v4.7-stable_linux.x86_64
+          mkdir -p "$RUNNER_TEMP/tpl" ~/.local/share/godot/export_templates/4.7.stable
+          unzip -q -o templates.tpz -d "$RUNNER_TEMP/tpl"
+          mv "$RUNNER_TEMP"/tpl/templates/* ~/.local/share/godot/export_templates/4.7.stable/
+
+      - name: Build
+        run: GODOT="$PWD/Godot_v4.7-stable_linux.x86_64" bash tools/site_build.sh
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.SITE_LIVE == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # one deploy at a time, and never cancel one halfway
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url || steps.retry.outputs.page_url }}
+    steps:
+      # the upload can finish a moment before GitHub lists it, so try twice
+      - id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait before trying the deploy again
+        if: ${{ steps.deployment.outcome == 'failure' }}
+        run: sleep 20
+
+      - id: retry
+        if: ${{ steps.deployment.outcome == 'failure' }}
+        uses: actions/deploy-pages@v4

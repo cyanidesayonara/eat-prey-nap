@@ -94,6 +94,7 @@ itch first, then Google Play; the Microsoft Store only if it makes sense.
 - **itch, Android APK:** the real game. Also where the 12 Play testers can be
   found. Needs the package ID and one signing key for good: an APK signed with
   another key than Play's cannot be updated from Play, only reinstalled.
+- **Website:** GitHub Pages, with the web build to try. Same limits as below.
 - **itch, web:** a try-out, not the game. A browser tab is easy for a cat to
   leave, does not know millimetres, and may cap the frame rate.
 - **itch, Windows:** for touch laptops, where a cat can trigger edge swipes.
