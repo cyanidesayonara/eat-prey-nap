@@ -1,47 +1,45 @@
-# Privacy Policy for Trivial Purrsuit
+# Privacy policy for Eat Prey Nap
 
-*Last updated: April 22, 2025*
+*Last updated: 24 November 2026*
 
-## Introduction
+Eat Prey Nap collects nothing about you or your cat.
 
-This Privacy Policy explains how Santtu Nykänen ("we", "our", or "us") collects, uses, and shares information when you use our mobile application Trivial Purrsuit (the "App").
+## The game
 
-## Information We Collect
+- It has no accounts, ads, analytics, tracking or purchases, and sends nothing
+  anywhere. There is nothing to share or sell.
+- Your choices (palette, size, sound and screen calibration) are saved on your
+  own device, or in your browser if you play there. Uninstalling the app, or
+  clearing the site's data in your browser, removes them.
+- The results of the last session are shown to you and forgotten when you
+  close the game.
+- The Android app asks for no permissions, so it has no internet access, camera,
+  microphone or location.
 
-### Information You Provide
-The App does not require you to create an account or provide any personal information.
+## Children
 
-### Automatically Collected Information
-- **Device Information**: We may collect information about your mobile device, including model, operating system version, unique device identifiers, and mobile network information.
-- **Usage Data**: We collect anonymous data about how you interact with the App to improve user experience.
+The game is suitable for all ages. It collects no data from anyone, including
+children.
 
-## How We Use Your Information
+## The website
 
-We use the information we collect to:
-- Operate and maintain the App
-- Improve, personalize, and expand the App
-- Understand and analyze how you use the App
-- Develop new products, services, features, and functionality
+The website sets no cookies and loads nothing from other sites. It is hosted on
+GitHub Pages, and GitHub may log visitors' IP addresses for security, as
+[its privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
+explains. If you download or play the game from a store, that store's own
+policy applies to the visit.
 
-## Data Sharing and Disclosure
+## Changes
 
-We do not sell, trade, or otherwise transfer your information to third parties. We may share anonymized, aggregated data for analytics purposes.
+A change to this policy is published here with a new date. Earlier versions
+are in this file's history.
 
-## Data Security
+## Contact
 
-We implement appropriate technical and organizational measures to protect your data from unauthorized access, alteration, disclosure, or destruction.
+Santtu Nykänen, through
+[this project's issues](https://github.com/cyanidesayonara/eat-prey-nap/issues).
 
-## Children's Privacy
+---
 
-The App is suitable for all ages and does not knowingly collect personal information from children under 13.
-
-## Changes to This Privacy Policy
-
-We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.
-
-## Contact Us
-
-If you have any questions about this Privacy Policy, please contact us at:
-- Email: [your-email@example.com]
-
-Please replace [your-email@example.com] with your actual contact email before publishing.
+This policy covers the Godot game. The older Flutter app, Trivial Purrsuit, had
+[its own policy](https://github.com/cyanidesayonara/eat-prey-nap/blob/flutter-legacy/PRIVACY_POLICY.md).

@@ -101,8 +101,7 @@ itch first, then Google Play; the Microsoft Store only if it makes sense.
 - **Microsoft Store:** doubtful. It wants its own packaging and listing, for
   few touch screens a cat may stand on. Decide on how the itch Windows
   download does.
-- **Before any public page:** the trademark check on the title and the new
-  privacy policy. M1 and M2 can use a password-protected itch page.
+- **Before any public page:** the trademark check on the title. M1 and M2 can use a password-protected itch page.
 
 ## Open
 
@@ -114,9 +113,8 @@ itch first, then Google Play; the Microsoft Store only if it makes sense.
   start screen shows the frame rate.
 - **Millimetres on the tablet.** Android reports a density bucket, so the ruler
   must be corrected once per device.
-- **Privacy policy.** `PRIVACY_POLICY.md` is still the Flutter app's, under the
-  old name, and says data is collected. The new game collects none. Rewrite it
-  before M5 (itch); until then it does not describe this game.
+- **Privacy policy.** `PRIVACY_POLICY.md` and `site/privacy/` say the same
+  thing; change both together, and whenever what the game stores changes.
 - **Numbers.** Everything in the constants at the top of
   `src/sim/mouse_brain.gd` is a guess until a cat has played.
 

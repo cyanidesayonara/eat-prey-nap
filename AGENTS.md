@@ -8,7 +8,7 @@ features: it holds the principle, the scope and the milestones.
 - The player is the cat. If a choice pleases humans but not cats, the cat wins.
 - **No AI attribution** in commits or pull requests: no co-author lines, no
   "generated with". CI checks the whole history.
-- Work on a branch and by pull request. Never push to `master`.
+- Work on a branch and by pull request. Never push to `main`.
 - Ask the owner before fixing the package ID, installing tools, or adding any
   Android permission. There is no internet permission, ever.
 - No recreation of the reference video's set, and no footage from it.
@@ -68,7 +68,7 @@ on a `v*` tag only, and only once the owner has made a GitHub environment
 `site/` is plain HTML and CSS: no framework, no external requests, relative
 links. `tools/site_build.sh` adds the web build at `/play` and checks the
 links; `tools/site_media.gd` makes the images. `pages.yml` deploys from
-`master`, only once the owner has set Pages to GitHub Actions and the
+`main`, only once the owner has set Pages to GitHub Actions and the
 repository variable `SITE_LIVE` to `true`.
 
 ## Android builds on Windows
