@@ -71,6 +71,15 @@ links; `tools/site_media.gd` makes the images. `pages.yml` deploys from
 `main`, only once the owner has set Pages to GitHub Actions and the
 repository variable `SITE_LIVE` to `true`.
 
+## Logo
+
+A cat in a badge: it hunts, eats and naps, and curls up and spins one turn with
+the badge in between. `site/logo.js` draws it on the website and over Godot's
+web loading screen (the Web preset's head include; `itch_export.sh` copies the
+file), `src/view/logo_view.gd` on the start screen. Both hold the same numbers
+and `tests/test_logo.gd` compares them. Never during play. Reduced motion gets
+the nap, still. `node tools/make_favicon.mjs` makes the tab icon.
+
 ## Android builds on Windows
 
 CI builds the APK (`android.yml`); a local build is optional. It needs JDK 17,
