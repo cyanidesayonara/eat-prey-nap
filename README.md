@@ -13,11 +13,11 @@ The plan is in [PROJECT.md](PROJECT.md).
 
 ## Run it
 
-Install [Godot 4.7](https://godotengine.org/download) (the standard build) and
-open this folder in it, or from a shell:
+A portable [Godot 4.7](https://godotengine.org/download) (the standard build)
+lives in `godot/` locally (gitignored).
 
 ```bash
-godot --path .
+godot/Godot_v4.7-stable_win64.exe --path .
 ```
 
 On a PC:
@@ -40,7 +40,7 @@ Options go after a `--`: `--play`, `--watch`, `--palette=0..2`, `--size=0..2`,
 ## Test it
 
 ```bash
-GODOT=path/to/godot bash tools/run_tests.sh
+GODOT=godot/Godot_v4.7-stable_win64_console.exe bash tools/run_tests.sh
 ```
 
 ## With a cat

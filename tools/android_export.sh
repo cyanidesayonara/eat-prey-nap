@@ -56,6 +56,10 @@ if [ ! -d android/build ]; then
   install=(--install-android-build-template)
 fi
 
+# no Gradle daemon: Godot's Windows console wrapper waits for every process
+# it started, and an idle daemon lives for hours, so the export never returns
+export GRADLE_OPTS="${GRADLE_OPTS:-} -Dorg.gradle.daemon=false"
+
 mkdir -p build/android
 timeout 1200 "$GODOT" --headless --path . "${install[@]}" --export-release "Android" build/android/EatPreyNap.aab
 test -d android/build

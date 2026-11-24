@@ -69,7 +69,7 @@ Highest refresh rate available (90/120/144 Hz), and good at 60.
 
 ## Scope of v1
 
-Mouse, bug, fish. Android tablets first (likely a Lenovo Idea Tab Pro, not
+Mouse, bug, fish. Android first, tablets above all (likely a Lenovo Idea Tab Pro, not
 bought yet), landscape, minSdk 24, targetSdk 36, no internet permission.
 
 Not in v1: laser dot, camera, ads, accounts, purchases, iOS.
@@ -82,8 +82,26 @@ Not in v1: laser dot, camera, ads, accounts, purchases, iOS.
 - **M2 Full session.** Prey, eat, nap.
 - **M3 Bug and fish.**
 - **M4 Hardening.**
-- **M5 Play release.** New account, so probably 12 testers for 14 days. A
+- **M5 itch.** First public release, the way Leash Resistance does it: CI
+  pushes a channel per build on a version tag. See below.
+- **M6 Play release.** New account, so probably 12 testers for 14 days. A
   trademark check on the title is still to do.
+
+## Where it ships
+
+itch first, then Google Play; the Microsoft Store only if it makes sense.
+
+- **itch, Android APK:** the real game. Also where the 12 Play testers can be
+  found. Needs the package ID and one signing key for good: an APK signed with
+  another key than Play's cannot be updated from Play, only reinstalled.
+- **itch, web:** a try-out, not the game. A browser tab is easy for a cat to
+  leave, does not know millimetres, and may cap the frame rate.
+- **itch, Windows:** for touch laptops, where a cat can trigger edge swipes.
+- **Microsoft Store:** doubtful. It wants its own packaging and listing, for
+  few touch screens a cat may stand on. Decide on how the itch Windows
+  download does.
+- **Before any public page:** the trademark check on the title and the new
+  privacy policy. M1 and M2 can use a password-protected itch page.
 
 ## Open
 
@@ -97,7 +115,7 @@ Not in v1: laser dot, camera, ads, accounts, purchases, iOS.
   must be corrected once per device.
 - **Privacy policy.** `PRIVACY_POLICY.md` is still the Flutter app's, under the
   old name, and says data is collected. The new game collects none. Rewrite it
-  before M5; until then it does not describe this game.
+  before M5 (itch); until then it does not describe this game.
 - **Numbers.** Everything in the constants at the top of
   `src/sim/mouse_brain.gd` is a guess until a cat has played.
 

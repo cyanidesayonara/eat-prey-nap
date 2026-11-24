@@ -56,11 +56,27 @@ tools/                  run_tests.sh, android_export.sh, make_icon.gd, shots.gd
 - `_set`, `_get` and `_notification` are engine virtuals; do not name your own
   functions that.
 
+## Android builds on Windows
+
+CI builds the APK (`android.yml`); a local build is optional. It needs JDK 17,
+an SDK with platform 36 and build-tools 36.1.0, and Godot's Android templates.
+A home path with a letter like "ä" breaks Java's sockets ("Unable to establish
+loopback connection"). The owner's PC has the SDK and JDK under `C:\Android`
+and builds with:
+
+```bash
+export JAVA_HOME='C:\Android\jdk-17' ANDROID_HOME='C:\Android\Sdk'
+export JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=C:\Android\tmp'
+export GRADLE_USER_HOME='C:\Android\gradle'
+```
+
+Then `tools/android_export.sh`, with the variables its header lists.
+
 ## Checks before a pull request
 
 ```bash
-GODOT=path/to/godot bash tools/run_tests.sh
-godot --path . --script res://tools/shots.gd   # then look at shots/
+GODOT=godot/Godot_v4.7-stable_win64_console.exe bash tools/run_tests.sh
+godot/Godot_v4.7-stable_win64_console.exe --path . --script res://tools/shots.gd   # then look at shots/
 ```
 
 Commit the `.uid` and `.import` files Godot makes. Keep tuning values in named
