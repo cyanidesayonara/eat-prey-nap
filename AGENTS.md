@@ -108,3 +108,10 @@ godot/Godot_v4.7-stable_win64_console.exe --path . --script res://tools/shots.gd
 Commit the `.uid` and `.import` files Godot makes. Keep tuning values in named
 constants. The export's permission and SDK levels are checked on the built APK
 by `.github/workflows/android.yml`.
+
+## Going easy on GitHub
+
+Test on this machine before pushing; push a branch once it is believed done,
+not after every commit, and open it as a draft until then. Batch related work:
+at most 4 pull requests a day, 2 open at once. No pictures in branches, no polling
+of checks, and nothing that runs on every push to main without Santtu's word.
