@@ -1,10 +1,15 @@
 name: CI
 
+# Kept light on GitHub: a pull request runs the tests once per push, a newer
+# push stops the older run, drafts run nothing and docs alone run no tests.
+# A merge to main runs nothing again; a version tag and a run by hand do.
 on:
   push:
-    branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,6 +20,7 @@ concurrency:
 
 jobs:
   attribution:
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -29,30 +35,63 @@ jobs:
           fi
 
   tests:
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
-      - name: Cache Godot
-        uses: actions/cache@v4
         with:
-          path: godot.zip
-          key: godot-4.7-stable-linux-x86_64
-      - name: Download Godot
+          fetch-depth: 2
+
+      # main requires this job, so docs alone cannot skip the workflow
+      # (paths-ignore would leave the pull request waiting): it stops early
+      - name: Is there anything to test?
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
         run: |
+          code=true
+          if [ "$EVENT" = pull_request ]; then
+            changed="$(git diff --name-only HEAD^1 HEAD)"
+            echo "$changed"
+            if [ -n "$changed" ] && ! grep -qvE '(\.md|^LICENSE)$' <<<"$changed"; then
+              code=false
+              echo "Docs only: no tests to run"
+            fi
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      # only the website build on main saves this cache
+      - name: Godot from the cache
+        if: ${{ steps.scope.outputs.code == 'true' }}
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            godot.zip
+            webtpl
+          key: godot-4.7-stable-linux-web
+
+      - name: Download Godot
+        if: ${{ steps.scope.outputs.code == 'true' }}
+        run: |
+          rm -rf webtpl
           if [ ! -s godot.zip ]; then
             curl -fsSL --retry 8 --retry-delay 15 --retry-all-errors -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
           fi
           unzip -q godot.zip
           chmod +x Godot_v4.7-stable_linux.x86_64
+
       - name: Import leaves the checkout clean
+        if: ${{ steps.scope.outputs.code == 'true' }}
         run: |
           ./Godot_v4.7-stable_linux.x86_64 --headless --path . --import
           if [ -n "$(git status --porcelain)" ]; then
             git status --porcelain
             exit 1
           fi
+
       - name: Headless tests
+        if: ${{ steps.scope.outputs.code == 'true' }}
         env:
           GODOT: ./Godot_v4.7-stable_linux.x86_64
         run: bash tools/run_tests.sh

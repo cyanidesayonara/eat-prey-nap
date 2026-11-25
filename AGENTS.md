@@ -61,8 +61,7 @@ tools/                  run_tests.sh, android_export.sh, itch_export.sh, site_bu
 ## itch
 
 `tools/itch_export.sh` builds the web and Windows versions. `itch.yml` runs it
-on pull requests that touch exports and launches the Windows exe; it publishes
-on a `v*` tag only, and only once the owner has made a GitHub environment
+by hand or on a `v*` tag and launches the Windows exe; it publishes on a tag only, and only once the owner has made a GitHub environment
 `itch` with `BUTLER_API_KEY` and `ITCH_PROJECT`. Never push a tag unasked.
 
 ## Website
@@ -70,7 +69,7 @@ on a `v*` tag only, and only once the owner has made a GitHub environment
 `site/` is plain HTML and CSS: no framework, no external requests, relative
 links. `tools/site_build.sh` adds the web build at `/play` and checks the
 links; `tools/site_media.gd` makes the images. `pages.yml` deploys from
-`main`, only once the owner has set Pages to GitHub Actions and the
+`main` when something the site ships changes, only once the owner has set Pages to GitHub Actions and the
 repository variable `SITE_LIVE` to `true`.
 
 ## Logo
@@ -84,7 +83,8 @@ the nap, still. `node tools/make_favicon.mjs` makes the tab icon.
 
 ## Android builds on Windows
 
-CI builds the APK (`android.yml`); a local build is optional. It needs JDK 17,
+`android.yml` builds the APK by hand or on a `v*` tag; pull requests do not, so
+build here after changing the export. It needs JDK 17,
 an SDK with platform 36 and build-tools 36.1.0, and Godot's Android templates.
 A home path with a letter like "ä" breaks Java's sockets ("Unable to establish
 loopback connection"). The owner's PC has the SDK and JDK under `C:\Android`
@@ -102,9 +102,20 @@ Then `tools/android_export.sh`, with the variables its header lists.
 
 ```bash
 GODOT=godot/Godot_v4.7-stable_win64_console.exe bash tools/run_tests.sh
+GODOT=godot/Godot_v4.7-stable_win64_console.exe bash tools/site_build.sh   # if site/ or the web build changed
 godot/Godot_v4.7-stable_win64_console.exe --path . --script res://tools/shots.gd   # then look at shots/
 ```
 
 Commit the `.uid` and `.import` files Godot makes. Keep tuning values in named
 constants. The export's permission and SDK levels are checked on the built APK
 by `.github/workflows/android.yml`.
+
+## Going easy on GitHub
+
+A sister repository was blocked for overloading GitHub. Test on this machine
+before pushing; push a branch once it is believed done, not after every commit,
+and open it as a draft until then. Batch related work: at most 4 pull requests a
+day, 2 open at once, and do not stack them. No pictures in branches beyond the
+icons and the site's few. No polling of checks and no watching of runs: read
+them once, when asked. Nothing that runs on every push to `main`, and no new
+workflow trigger, cache or artifact without Santtu's word.
