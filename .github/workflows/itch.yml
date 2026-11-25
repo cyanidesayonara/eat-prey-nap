@@ -1,5 +1,6 @@
-# The web and Windows builds for itch. Every run builds them and launches the
-# Windows one; only a version tag (v*) also publishes, after CI is green.
+# The web and Windows builds for itch, by hand or on a version tag. Every run
+# builds them and launches the Windows one; only a version tag (v*) also
+# publishes, after CI is green.
 #
 # Publishing needs, in a GitHub environment named `itch` that deploys from v*
 # tags only: the secret BUTLER_API_KEY and the variable ITCH_PROJECT
@@ -10,12 +11,6 @@ name: itch
 on:
   push:
     tags: ["v*"]
-  pull_request:
-    paths:
-      - export_presets.cfg
-      - project.godot
-      - tools/itch_export.sh
-      - .github/workflows/itch.yml
   workflow_dispatch:
 
 permissions:
@@ -23,7 +18,7 @@ permissions:
 
 concurrency:
   group: itch-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -31,14 +26,6 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
-
-      - name: Cache Godot and its export templates
-        uses: actions/cache@v4
-        with:
-          path: |
-            godot.zip
-            templates.tpz
-          key: godot-4.7-stable-linux-templates
 
       - name: Download Godot + export templates
         run: |
@@ -62,13 +49,13 @@ jobs:
         with:
           name: itch-web
           path: build/web
-          retention-days: 7
+          retention-days: 1
 
       - uses: actions/upload-artifact@v4
         with:
           name: itch-windows
           path: build/win
-          retention-days: 7
+          retention-days: 1
 
   windows:
     needs: build

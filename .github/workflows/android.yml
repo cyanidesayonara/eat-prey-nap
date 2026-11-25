@@ -1,15 +1,12 @@
 # Build the AAB and APK, signed with a throwaway key made for this run: no
 # secrets, nothing published. The APK artifact installs on a tablet by hand.
+# Runs by hand, or on a version tag: not on pull requests.
 
 name: Android build
 
 on:
-  pull_request:
-    paths:
-      - export_presets.cfg
-      - project.godot
-      - tools/android_export.sh
-      - .github/workflows/android.yml
+  push:
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -39,14 +36,6 @@ jobs:
 
       - name: Install Android SDK components
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
-
-      - name: Cache Godot and its export templates
-        uses: actions/cache@v4
-        with:
-          path: |
-            godot.zip
-            templates.tpz
-          key: godot-4.7-stable-linux-templates
 
       - name: Download Godot + export templates
         run: |
@@ -98,4 +87,4 @@ jobs:
         with:
           name: android-apk
           path: build/android/EatPreyNap.apk
-          retention-days: 7
+          retention-days: 2
